@@ -494,7 +494,6 @@ async function criarPreferenciaMercadoPago() {
   }
 }
 
-// Modificar a função finalizarPedido para usar Mercado Pago
 // Finalizar pedido (VERSÃO COM MERCADO PAGO)
 async function finalizarPedido() {
   if (!metodoPagamento) {
@@ -650,7 +649,7 @@ function calcularTotais() {
   document.getElementById('resumo-total').textContent = `R$ ${total.toFixed(2)}`;
 }
 
-// Buscar CEP - AGORA FUNCIONAL
+// Buscar CEP 
 function buscarCep() {
   const cepInput = document.getElementById('cep');
   const cep = cepInput.value.replace(/\D/g, '');
@@ -872,7 +871,7 @@ async function criarPreferenciaMercadoPago() {
   }
 }
 
-// Finalizar pedido (VERSÃO CORRIGIDA)
+// Finalizar pedido 
 async function finalizarPedido() {
   if (!metodoPagamento) {
     alert('Selecione um método de pagamento');
