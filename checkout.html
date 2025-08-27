@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Tecnologia DS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background-color: #0a192f;
+    }
+    
+    .card-checkout {
+      background-color: rgba(31, 41, 55, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(55, 65, 81, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      color: white;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+    }
+    
+    .payment-option {
+      border: 2px solid rgba(55, 65, 81, 0.5);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .payment-option:hover {
+      border-color: #3B82F6;
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    .payment-option.selected {
+      border-color: #10B981;
+      background-color: rgba(16, 185, 129, 0.1);
+    }
+    
+    .pix-code {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      color: black;
+      text-align: center;
+      font-family: monospace;
+      word-break: break-all;
+    }
+    
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 3rem;
+      counter-reset: step;
+    }
+    
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #374151;
+      z-index: 1;
+    }
+    
+    .progress-step {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      width: 33.33%;
+    }
+    
+    .progress-step::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      display: block;
+      margin: 0 auto 10px auto;
+      border-radius: 50%;
+      background-color: #374151;
+      color: white;
+    }
+    
+    .progress-step.active::before {
+      background-color: #3B82F6;
+    }
+    
+    .progress-step.completed::before {
+      background-color: #10B981;
+      content: '✓';
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- Cabeçalho (Header) -->
+<header class="bg-gray-900 bg-opacity-80 backdrop-blur-md shadow-lg py-4 fixed w-full z-50">
+  <nav class="container mx-auto flex justify-between items-center px-4">
+    <div class="text-2xl font-bold text-blue-500 flex items-center">
+      <i class="fas fa-microchip mr-2"></i>Tecnologia DS
+    </div>
+    <ul class="hidden md:flex space-x-6 items-center">
+      <li><a href="index.html" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Voltar à Loja</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- Conteúdo Principal -->
+<main class="pt-24 pb-16 px-4 container mx-auto">
+  <h1 class="text-4xl font-bold text-white mb-8 text-center">Finalizar Compra</h1>
+  
+  <!-- Barra de Progresso -->
+  <div class="progress-bar">
+    <div class="progress-step active">
+      <span>Endereço</span>
+    </div>
+    <div class="progress-step">
+      <span>Pagamento</span>
+    </div>
+    <div class="progress-step">
+      <span>Confirmação</span>
+    </div>
+  </div>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Seção de Endereço e Frete -->
+    <div class="card-checkout">
+      <h2 class="text-2xl font-bold text-blue-400 mb-6">Endereço de Entrega</h2>
+      
+      <form id="address-form">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-300 mb-2">CEP</label>
+            <input type="text" id="cep" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="00000-000" required>
+          </div>
+          <div class="flex items-end">
+            <button type="button" id="buscar-cep" class="btn-primary w-full">Buscar CEP</button>
+          </div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-gray-300 mb-2">Endereço</label>
+          <input type="text" id="endereco" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Rua, Avenida, etc." required>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-300 mb-2">Número</label>
+            <input type="text" id="numero" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-2">Complemento</label>
+            <input type="text" id="complemento" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-gray-300 mb-2">Bairro</label>
+          <input type="text" id="bairro" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <label class="block text-gray-300 mb-2">Cidade</label>
+            <input type="text" id="cidade" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-2">Estado</label>
+            <select id="estado" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              <option value="">Selecione</option>
+              <option value="AC">Acre</option>
+              <option value="AL">Alagoas</option>
+              <option value="AP">Amapá</option>
+              <option value="AM">Amazonas</option>
+              <option value="BA">Bahia</option>
+              <option value="CE">Ceará</option>
+              <option value="DF">Distrito Federal</option>
+              <option value="ES">Espírito Santo</option>
+              <option value="GO">Goiás</option>
+              <option value="MA">Maranhão</option>
+              <option value="MT">Mato Grosso</option>
+              <option value="MS">Mato Grosso do Sul</option>
+              <option value="MG">Minas Gerais</option>
+              <option value="PA">Pará</option>
+              <option value="PB">Paraíba</option>
+              <option value="PR">Paraná</option>
+              <option value="PE">Pernambuco</option>
+              <option value="PI">Piauí</option>
+              <option value="RJ">Rio de Janeiro</option>
+              <option value="RN">Rio Grande do Norte</option>
+              <option value="RS">Rio Grande do Sul</option>
+              <option value="RO">Rondônia</option>
+              <option value="RR">Roraima</option>
+              <option value="SC">Santa Catarina</option>
+              <option value="SP">São Paulo</option>
+              <option value="SE">Sergipe</option>
+              <option value="TO">Tocantins</option>
+            </select>
+          </div>
+        </div>
+        
+        <h3 class="text-xl font-bold text-blue-400 mb-4">Opções de Entrega</h3>
+        <div id="opcoes-frete" class="space-y-3 mb-6">
+          <div class="flex items-center justify-between p-3 bg-gray-800 rounded-md">
+            <div class="flex items-center">
+              <input type="radio" name="frete" id="sedex" value="sedex" class="mr-3">
+              <label for="sedex" class="text-gray-300">SEDEX</label>
+            </div>
+            <span class="text-green-400 font-bold">R$ 25,90</span>
+            <span class="text-gray-400 text-sm">3-5 dias úteis</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-gray-800 rounded-md">
+            <div class="flex items-center">
+              <input type="radio" name="frete" id="pac" value="pac" class="mr-3">
+              <label for="pac" class="text-gray-300">PAC</label>
+            </div>
+            <span class="text-green-400 font-bold">R$ 18,90</span>
+            <span class="text-gray-400 text-sm">7-15 dias úteis</span>
+          </div>
+        </div>
+        
+        <button type="button" id="btn-continuar" class="btn-primary w-full">Continuar para Pagamento</button>
+      </form>
+    </div>
+    
+    <!-- Resumo do Pedido -->
+    <div class="card-checkout">
+      <h2 class="text-2xl font-bold text-blue-400 mb-6">Resumo do Pedido</h2>
+      
+      <div id="resumo-produtos" class="mb-6">
+        <!-- Itens serão adicionados via JavaScript -->
+      </div>
+      
+      <div class="space-y-3 border-t border-gray-700 pt-4">
+        <div class="flex justify-between">
+          <span class="text-gray-300">Subtotal</span>
+          <span class="text-gray-300" id="subtotal">R$ 0,00</span>
+        </div>
+        
+        <div class="flex justify-between">
+          <span class="text-gray-300">Frete</span>
+          <span class="text-gray-300" id="frete-valor">R$ 0,00</span>
+        </div>
+        
+        <div class="flex justify-between text-lg font-bold mt-3 pt-3 border-t border-gray-700">
+          <span>Total</span>
+          <span id="total">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Seção de Pagamento (inicialmente oculta) -->
+  <div id="secao-pagamento" class="hidden mt-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="card-checkout">
+        <h2 class="text-2xl font-bold text-blue-400 mb-6">Método de Pagamento</h2>
+        
+        <div class="space-y-4">
+          <div class="payment-option" data-method="pix">
+            <div class="flex items-center">
+              <input type="radio" name="pagamento" id="pix" value="pix" class="mr-3">
+              <label for="pix" class="text-gray-300 font-medium">PIX</label>
+            </div>
+            <p class="text-gray-400 text-sm mt-2">Pagamento instantâneo com 5% de desconto</p>
+          </div>
+          
+          <div class="payment-option" data-method="cartao">
+            <div class="flex items-center">
+              <input type="radio" name="pagamento" id="cartao" value="cartao" class="mr-3">
+              <label for="cartao" class="text-gray-300 font-medium">Cartão de Crédito</label>
+            </div>
+            <p class="text-gray-400 text-sm mt-2">Parcele em até 12x</p>
+            
+            <div id="dados-cartao" class="mt-4 hidden space-y-4">
+              <div>
+                <label class="block text-gray-300 mb-2">Número do Cartão</label>
+                <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0000 0000 0000 0000">
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-gray-300 mb-2">Validade</label>
+                  <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="MM/AA">
+                </div>
+                
+                <div>
+                  <label class="block text-gray-300 mb-2">CVV</label>
+                  <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="000">
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 mb-2">Nome no Cartão</label>
+                <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Como está no cartão">
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 mb-2">Parcelas</label>
+                <select class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option>1x de R$ 0,00 sem juros</option>
+                  <option>2x de R$ 0,00 sem juros</option>
+                  <option>3x de R$ 0,00 sem juros</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="payment-option" data-method="debito">
+            <div class="flex items-center">
+              <input type="radio" name="pagamento" id="debito" value="debito" class="mr-3">
+              <label for="debito" class="text-gray-300 font-medium">Cartão de Débito</label>
+            </div>
+            <p class="text-gray-400 text-sm mt-2">Pagamento à vista</p>
+          </div>
+          
+          <div class="payment-option" data-method="boleto">
+            <div class="flex items-center">
+              <input type="radio" name="pagamento" id="boleto" value="boleto" class="mr-3">
+              <label for="boleto" class="text-gray-300 font-medium">Boleto Bancário</label>
+            </div>
+            <p class="text-gray-400 text-sm mt-2">Pagamento em até 3 dias úteis</p>
+          </div>
+        </div>
+        
+        <div id="pix-info" class="mt-6 hidden">
+          <div class="pix-code">
+            <p class="font-bold mb-2">Chave PIX (Mercado Pago):</p>
+            <p>97deb86a-7d32-44b9-99e6-448821331dec</p>
+          </div>
+          <p class="text-gray-300 text-sm mt-3 text-center">Após o pagamento, seu pedido será confirmado automaticamente</p>
+        </div>
+        
+        <button type="button" id="btn-finalizar" class="btn-primary w-full mt-6">Finalizar Pedido</button>
+      </div>
+      
+      <div class="card-checkout">
+        <h2 class="text-2xl font-bold text-blue-400 mb-6">Resumo Final</h2>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-medium text-blue-400 mb-2">Endereço de Entrega</h3>
+          <p id="resumo-endereco" class="text-gray-300">Seu endereço aparecerá aqui</p>
+        </div>
+        
+        <div id="resumo-pagamento" class="mb-6">
+          <h3 class="text-lg font-medium text-blue-400 mb-2">Método de Pagamento</h3>
+          <p class="text-gray-300">Selecione um método de pagamento</p>
+        </div>
+        
+        <div class="space-y-3 border-t border-gray-700 pt-4">
+          <div class="flex justify-between">
+            <span class="text-gray-300">Subtotal</span>
+            <span class="text-gray-300" id="resumo-subtotal">R$ 0,00</span>
+          </div>
+          
+          <div class="flex justify-between">
+            <span class="text-gray-300">Frete</span>
+            <span class="text-gray-300" id="resumo-frete">R$ 0,00</span>
+          </div>
+          
+          <div class="flex justify-between">
+            <span class="text-gray-300">Desconto</span>
+            <span class="text-green-400" id="resumo-desconto">R$ 0,00</span>
+          </div>
+          
+          <div class="flex justify-between text-lg font-bold mt-3 pt-3 border-t border-gray-700">
+            <span>Total</span>
+            <span id="resumo-total">R$ 0,00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Rodapé (Footer) -->
+<footer class="bg-gray-900 bg-opacity-80 py-8 text-center text-gray-500 text-sm border-t border-gray-700 mt-12">
+  <div class="container mx-auto px-4">
+    <p>&copy; 2025 Tecnologia DS. Todos os direitos reservados.</p>
+    <div class="flex justify-center space-x-4 mt-4">
+      <a href="#" class="hover:text-blue-400 transition-colors duration-200">Privacidade</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-200">Termos de Serviço</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Dados da compra
+let compra = JSON.parse(localStorage.getItem('compraAtual')) || {};
+let freteSelecionado = 0;
+let metodoPagamento = '';
+let desconto = 0;
+
+// Configuração do Mercado Pago
+const mp = new MercadoPago('SUA_PUBLIC_KEY_AQUI', {
+  locale: 'pt-BR'
+});
+
+// Função para criar preferência de pagamento
+async function criarPreferenciaMercadoPago() {
+  const itens = compra.itens.map(item => ({
+    title: item.nome,
+    quantity: item.quantidade,
+    unit_price: item.preco,
+    currency_id: 'BRL'
+  }));
+  
+  // Adicionar o frete como um item adicional
+  if (freteSelecionado > 0) {
+    itens.push({
+      title: 'Frete',
+      quantity: 1,
+      unit_price: freteSelecionado,
+      currency_id: 'BRL'
+    });
+  }
+  
+  // Aplicar desconto para PIX
+  if (metodoPagamento === 'pix') {
+    const subtotal = compra.itens.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+    const total = subtotal + freteSelecionado;
+    const descontoValor = total * 0.05;
+    
+    itens.push({
+      title: 'Desconto PIX',
+      quantity: 1,
+      unit_price: -descontoValor,
+      currency_id: 'BRL'
+    });
+  }
+  
+  try {
+    const response = await fetch('/criar-preferencia', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        itens: itens,
+        back_urls: {
+          success: window.location.href + '?status=success',
+          failure: window.location.href + '?status=failure',
+          pending: window.location.href + '?status=pending'
+        },
+        auto_return: 'approved',
+        payment_methods: {
+          excluded_payment_types: metodoPagamento === 'pix' ? 
+            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'ticket'}] : 
+            metodoPagamento === 'cartao' ? 
+            [{id: 'ticket'}, {id: 'bank_transfer'}] : 
+            metodoPagamento === 'boleto' ? 
+            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'bank_transfer'}] : 
+            []
+        }
+      })
+    });
+    
+    const preference = await response.json();
+    return preference.id;
+  } catch (error) {
+    console.error('Erro ao criar preferência:', error);
+    throw error;
+  }
+}
+
+// Modificar a função finalizarPedido para usar Mercado Pago
+// Finalizar pedido (VERSÃO COM MERCADO PAGO)
+async function finalizarPedido() {
+  if (!metodoPagamento) {
+    alert('Selecione um método de pagamento');
+    return;
+  }
+  
+  // Validar dados do cartão se for a opção selecionada
+  if (metodoPagamento === 'cartao') {
+    const inputs = document.querySelectorAll('#dados-cartao input');
+    let cartaoValido = true;
+    
+    inputs.forEach(input => {
+      if (!input.value) {
+        cartaoValido = false;
+        input.classList.add('border-red-500');
+      } else {
+        input.classList.remove('border-red-500');
+      }
+    });
+    
+    if (!cartaoValido) {
+      alert('Preencha todos os dados do cartão');
+      return;
+    }
+  }
+  
+  try {
+    // Criar botão de checkout do Mercado Pago
+    const preferenciaId = await criarPreferenciaMercadoPago();
+    
+    // Inicializar checkout
+    mp.checkout({
+      preference: {
+        id: preferenciaId
+      },
+      render: {
+        container: '.btn-primary', // Onde o botão será renderizado
+        label: 'Pagar com Mercado Pago'
+      }
+    });
+    
+    // Aqui você também pode salvar o pedido no seu banco de dados
+    salvarPedidoNoBanco(preferenciaId);
+    
+  } catch (error) {
+    console.error('Erro ao processar pagamento:', error);
+    alert('Erro ao processar pagamento. Tente novamente.');
+  }
+}
+
+// Função para salvar o pedido no seu backend
+async function salvarPedidoNoBanco(preferenciaId) {
+  try {
+    await fetch('/salvar-pedido', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        preferencia_id: preferenciaId,
+        itens: compra.itens,
+        endereco: {
+          cep: document.getElementById('cep').value,
+          endereco: document.getElementById('endereco').value,
+          numero: document.getElementById('numero').value,
+          complemento: document.getElementById('complemento').value,
+          bairro: document.getElementById('bairro').value,
+          cidade: document.getElementById('cidade').value,
+          estado: document.getElementById('estado').value
+        },
+        frete: freteSelecionado,
+        metodo_pagamento: metodoPagamento,
+        total: compra.itens.reduce((total, item) => total + (item.preco * item.quantidade), 0) + freteSelecionado - desconto
+      })
+    });
+  } catch (error) {
+    console.error('Erro ao salvar pedido:', error);
+  }
+}
+// Inicializar a página
+document.addEventListener('DOMContentLoaded', function() {
+  if (!compra.itens || compra.itens.length === 0) {
+    alert('Seu carrinho está vazio! Redirecionando para a loja...');
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  // Renderizar produtos no resumo
+  renderizarResumoProdutos();
+  
+  // Calcular totais
+  calcularTotais();
+  
+  // Configurar eventos
+  document.getElementById('buscar-cep').addEventListener('click', buscarCep);
+  document.getElementById('btn-continuar').addEventListener('click', continuarParaPagamento);
+  
+  // Eventos para métodos de pagamento
+  document.querySelectorAll('.payment-option').forEach(option => {
+    option.addEventListener('click', () => {
+      selecionarMetodoPagamento(option.dataset.method);
+    });
+  });
+  
+  document.getElementById('btn-finalizar').addEventListener('click', finalizarPedido);
+  
+  // Eventos para seleção de frete
+  document.querySelectorAll('input[name="frete"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'sedex') {
+        freteSelecionado = 25.90;
+      } else if (e.target.value === 'pac') {
+        freteSelecionado = 18.90;
+      }
+      calcularTotais();
+    });
+  });
+});
+
+// Renderizar produtos no resumo
+function renderizarResumoProdutos() {
+  const container = document.getElementById('resumo-produtos');
+  container.innerHTML = '';
+  
+  compra.itens.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'flex justify-between items-center py-3 border-b border-gray-700';
+    div.innerHTML = `
+      <div>
+        <p class="font-medium">${item.nome}</p>
+        <p class="text-gray-400 text-sm">Quantidade: ${item.quantidade}</p>
+      </div>
+      <span class="text-green-400 font-bold">R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// Calcular totais
+function calcularTotais() {
+  const subtotal = compra.itens.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+  const total = subtotal + freteSelecionado - desconto;
+  
+  document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+  document.getElementById('frete-valor').textContent = `R$ ${freteSelecionado.toFixed(2)}`;
+  document.getElementById('total').textContent = `R$ ${total.toFixed(2)}`;
+  
+  // Atualizar também no resumo final
+  document.getElementById('resumo-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+  document.getElementById('resumo-frete').textContent = `R$ ${freteSelecionado.toFixed(2)}`;
+  document.getElementById('resumo-desconto').textContent = `R$ ${desconto.toFixed(2)}`;
+  document.getElementById('resumo-total').textContent = `R$ ${total.toFixed(2)}`;
+}
+
+// Buscar CEP - AGORA FUNCIONAL
+function buscarCep() {
+  const cepInput = document.getElementById('cep');
+  const cep = cepInput.value.replace(/\D/g, '');
+  
+  if (cep.length !== 8) {
+    alert('Digite um CEP válido com 8 dígitos');
+    return;
+  }
+  
+  // Mostrar loading
+  const btnBuscar = document.getElementById('buscar-cep');
+  btnBuscar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+  btnBuscar.disabled = true;
+  
+  // Fazer requisição para a API ViaCEP
+  fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.erro) {
+        alert('CEP não encontrado. Verifique o número digitado.');
+        return;
+      }
+      
+      // Preencher os campos com os dados retornados
+      document.getElementById('endereco').value = data.logradouro || '';
+      document.getElementById('bairro').value = data.bairro || '';
+      document.getElementById('cidade').value = data.localidade || '';
+      document.getElementById('estado').value = data.uf || '';
+      
+      // Focar no campo número para facilitar o preenchimento
+      document.getElementById('numero').focus();
+    })
+    .catch(error => {
+      console.error('Erro ao buscar CEP:', error);
+      alert('Erro ao buscar CEP. Tente novamente.');
+    })
+    .finally(() => {
+      // Restaurar o botão
+      btnBuscar.innerHTML = 'Buscar CEP';
+      btnBuscar.disabled = false;
+    });
+}
+
+// Continuar para pagamento
+function continuarParaPagamento() {
+  const form = document.getElementById('address-form');
+  
+  // Validar formulário
+  let formValido = true;
+  form.querySelectorAll('[required]').forEach(input => {
+    if (!input.value) {
+      formValido = false;
+      input.classList.add('border-red-500');
+    } else {
+      input.classList.remove('border-red-500');
+    }
+  });
+  
+  if (!formValido) {
+    alert('Preencha todos os campos obrigatórios');
+    return;
+  }
+  
+  if (!document.querySelector('input[name="frete"]:checked')) {
+    alert('Selecione uma opção de frete');
+    return;
+  }
+  
+  // Atualizar barra de progresso
+  document.querySelectorAll('.progress-step').forEach((step, index) => {
+    if (index === 0) {
+      step.classList.remove('active');
+      step.classList.add('completed');
+    } else if (index === 1) {
+      step.classList.add('active');
+    }
+  });
+  
+  // Esconder seção de endereço e mostrar seção de pagamento
+  document.getElementById('secao-pagamento').classList.remove('hidden');
+  
+  // Atualizar resumo com endereço
+  const endereco = `
+    ${document.getElementById('endereco').value}, ${document.getElementById('numero').value}
+    ${document.getElementById('complemento').value ? ', ' + document.getElementById('complemento').value : ''}<br>
+    ${document.getElementById('bairro').value}<br>
+    ${document.getElementById('cidade').value} - ${document.getElementById('estado').value}<br>
+    CEP: ${document.getElementById('cep').value}
+  `;
+  document.getElementById('resumo-endereco').innerHTML = endereco;
+  
+  // Rolar para a seção de pagamento
+  document.getElementById('secao-pagamento').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Selecionar método de pagamento
+function selecionarMetodoPagamento(metodo) {
+  metodoPagamento = metodo;
+  
+  // Remover seleção anterior
+  document.querySelectorAll('.payment-option').forEach(option => {
+    option.classList.remove('selected');
+  });
+  
+  // Adicionar seleção atual
+  document.querySelector(`[data-method="${metodo}"]`).classList.add('selected');
+  
+  // Marcar radio button
+  document.getElementById(metodo).checked = true;
+  
+  // Mostrar/ocultar campos específicos
+  if (metodo === 'cartao') {
+    document.getElementById('dados-cartao').classList.remove('hidden');
+  } else {
+    document.getElementById('dados-cartao').classList.add('hidden');
+  }
+  
+  if (metodo === 'pix') {
+    document.getElementById('pix-info').classList.remove('hidden');
+    // Aplicar desconto de 5% para PIX
+    const subtotal = compra.itens.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+    desconto = (subtotal + freteSelecionado) * 0.05;
+  } else {
+    document.getElementById('pix-info').classList.add('hidden');
+    desconto = 0;
+  }
+  
+  // Atualizar resumo de pagamento
+  let textoPagamento = '';
+  switch(metodo) {
+    case 'pix':
+      textoPagamento = 'PIX (5% de desconto aplicado)';
+      break;
+    case 'cartao':
+      textoPagamento = 'Cartão de Crédito';
+      break;
+    case 'debito':
+      textoPagamento = 'Cartão de Débito';
+      break;
+    case 'boleto':
+      textoPagamento = 'Boleto Bancário';
+      break;
+  }
+  
+  document.getElementById('resumo-pagamento').innerHTML = `
+    <h3 class="text-lg font-medium text-blue-400 mb-2">Método de Pagamento</h3>
+    <p class="text-gray-300">${textoPagamento}</p>
+  `;
+  
+  // Recalcular totais com possível desconto
+  calcularTotais();
+}
+
+// Função para criar preferência de pagamento (VERSÃO CORRIGIDA)
+async function criarPreferenciaMercadoPago() {
+  const itens = compra.itens.map(item => ({
+    title: item.nome,
+    quantity: item.quantidade,
+    unit_price: item.preco,
+    currency_id: 'BRL'
+  }));
+  
+  // Adicionar o frete como um item adicional
+  if (freteSelecionado > 0) {
+    itens.push({
+      title: 'Frete',
+      quantity: 1,
+      unit_price: freteSelecionado,
+      currency_id: 'BRL'
+    });
+  }
+  
+  // Aplicar desconto para PIX
+  if (metodoPagamento === 'pix') {
+    const subtotal = compra.itens.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+    const total = subtotal + freteSelecionado;
+    const descontoValor = total * 0.05;
+    
+    itens.push({
+      title: 'Desconto PIX',
+      quantity: 1,
+      unit_price: -descontoValor,
+      currency_id: 'BRL'
+    });
+  }
+  
+  try {
+    // NOTA: Você precisa implementar o endpoint '/criar-preferencia' no seu backend
+    const response = await fetch('/criar-preferencia', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        itens: itens,
+        back_urls: {
+          success: window.location.origin + '/sucesso.html',
+          failure: window.location.origin + '/falha.html',
+          pending: window.location.origin + '/pendente.html'
+        },
+        auto_return: 'approved',
+        payment_methods: {
+          excluded_payment_types: metodoPagamento === 'pix' ? 
+            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'ticket'}] : 
+            metodoPagamento === 'cartao' ? 
+            [{id: 'ticket'}, {id: 'bank_transfer'}] : 
+            metodoPagamento === 'boleto' ? 
+            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'bank_transfer'}] : 
+            []
+        }
+      })
+    });
+    
+    const preference = await response.json();
+    return preference.id;
+  } catch (error) {
+    console.error('Erro ao criar preferência:', error);
+    throw error;
+  }
+}
+
+// Finalizar pedido (VERSÃO CORRIGIDA)
+async function finalizarPedido() {
+  if (!metodoPagamento) {
+    alert('Selecione um método de pagamento');
+    return;
+  }
+  
+  // Validar dados do cartão se for a opção selecionada
+  if (metodoPagamento === 'cartao') {
+    const inputs = document.querySelectorAll('#dados-cartao input');
+    let cartaoValido = true;
+    
+    inputs.forEach(input => {
+      if (!input.value) {
+        cartaoValido = false;
+        input.classList.add('border-red-500');
+      } else {
+        input.classList.remove('border-red-500');
+      }
+    });
+    
+    if (!cartaoValido) {
+      alert('Preencha todos os dados do cartão');
+      return;
+    }
+  }
+  
+  try {
+    // Criar preferência no Mercado Pago
+    const preferenciaId = await criarPreferenciaMercadoPago();
+    
+    // Redirecionar para o checkout do Mercado Pago
+    window.location.href = `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${preferenciaId}`;
+    
+    // Aqui você também pode salvar o pedido no seu banco de dados
+    await salvarPedidoNoBanco(preferenciaId);
+    
+  } catch (error) {
+    console.error('Erro ao processar pagamento:', error);
+    alert('Erro ao processar pagamento. Tente novamente.');
+  }
+}
+
+</script>
+</body>
+</html>
