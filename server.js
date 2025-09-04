@@ -1,37 +1,53 @@
 import express from "express";
 import mercadopago from "mercadopago";
+import cors from "cors"; // Importa o CORS
 
 const app = express();
 app.use(express.json());
+app.use(cors()); // Adiciona o CORS para permitir a comunicação entre o teu site e este servidor
 
-// coloque sua chave secreta do Mercado Pago aqui
+// MUDANÇA 1: Ler a chave secreta de uma variável de ambiente
+// Isto torna o teu código muito mais seguro.
 mercadopago.configure({
-  access_token: "SUA_ACCESS_TOKEN_AQUI"
+  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN
 });
 
-// rota para criar a preferência
+// Rota para criar a preferência de pagamento
 app.post("/criar-preferencia", async (req, res) => {
   try {
+    // MUDANÇA 2: Ler os itens do carrinho que o front-end enviou
+    const { itens } = req.body;
+
+    // Validação para garantir que recebemos os itens
+    if (!itens || !Array.isArray(itens) || itens.length === 0) {
+      return res.status(400).json({ error: 'A lista de itens é inválida ou está vazia.' });
+    }
+
+    // Prepara os itens no formato que o Mercado Pago espera
+    const items_mercadopago = itens.map(item => ({
+      title: item.nome,
+      unit_price: item.preco,
+      quantity: item.quantidade,
+      currency_id: 'BRL'
+    }));
+
     const preference = await mercadopago.preferences.create({
-      items: [
-        {
-          title: "Cabo de rede",
-          unit_price: 10,
-          quantity: 1
-        }
-      ],
+      items: items_mercadopago, // Usa a lista de itens dinâmica
+      
+      // MUDANÇA 3: URLs que apontam para o teu site real
       back_urls: {
-        success: "http://localhost:5500/sucesso.html",
-        failure: "http://localhost:5500/erro.html",
-        pending: "http://localhost:5500/pendente.html"
+        success: "https://ds-tecnologia.netlify.app/sucesso.html", // Altere se necessário
+        failure: "https://ds-tecnologia.netlify.app/falha.html",   // Altere se necessário
+        pending: "https://ds-tecnologia.netlify.app/pendente.html" // Altere se necessário
       },
       auto_return: "approved"
     });
 
     res.json({ id: preference.body.id });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erro ao criar preferência" });
+
+  } catch (erro) { // MUDANÇA 4: Correção do nome da variável de erro
+    console.error(erro); // Mostra o erro detalhado no console do servidor
+    res.status(500).json({ error: "Erro ao criar preferência de pagamento." });
   }
 });
 
