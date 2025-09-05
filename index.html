@@ -747,6 +747,36 @@
         });
       }
       
+<<<<<<< HEAD
+=======
+// Função para abrir/fechar o carrinho
+function abrirCheckout() {
+  const container = document.getElementById('carrinho-container');
+  // Alternar visibilidade
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    renderizarCarrinho();
+    carrinhoAberto = true;
+  } else {
+    container.classList.add('hidden');
+    carrinhoAberto = false;
+  }
+}
+
+// Fechar carrinho ao clicar fora dele
+document.addEventListener('click', function(e) {
+  const carrinhoContainer = document.getElementById('carrinho-container');
+  const carrinhoBtn = document.querySelector('.carrinho-btn');
+  
+  if (carrinhoAberto && 
+      !carrinhoContainer.contains(e.target) && 
+      !carrinhoBtn.contains(e.target)) {
+    carrinhoContainer.classList.add('hidden');
+    carrinhoAberto = false;
+  }
+});
+
+>>>>>>> 30097fbd99d0d9f9a09fc4d57495b4d97cfe0f48
       // Salvar no localStorage
       localStorage.setItem('carrinho', JSON.stringify(carrinho));
       
@@ -1041,9 +1071,25 @@
     }
   }
 
+<<<<<<< HEAD
   // Verificar se usuário está logado
   function usuarioEstaLogado() {
     return localStorage.getItem('usuarioLogado') !== null;
+=======
+// Inicializar contador do carrinho
+atualizarContadorCarrinho();
+// Função para abrir/fechar o carrinho
+function abrirCheckout() {
+  const container = document.getElementById('carrinho-container');
+  // Alternar visibilidade
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    renderizarCarrinho();
+    carrinhoAberto = true;
+  } else {
+    container.classList.add('hidden');
+    carrinhoAberto = false;
+>>>>>>> 30097fbd99d0d9f9a09fc4d57495b4d97cfe0f48
   }
 
   // Função para finalizar compra
@@ -1083,6 +1129,7 @@
     // Limpar flag de pendência
     window.pendenteFinalizacaoCompra = false;
   }
+<<<<<<< HEAD
 
   // Inicializar contador do carrinho
   atualizarContadorCarrinho();
@@ -1104,3 +1151,7 @@
   });
   */
 </script>
+=======
+});
+</script>
+>>>>>>> 30097fbd99d0d9f9a09fc4d57495b4d97cfe0f48
