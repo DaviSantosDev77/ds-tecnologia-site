@@ -1,56 +1,76 @@
-import express from "express";
-import mercadopago from "mercadopago";
-import cors from "cors"; // Importa o CORS
+const express = require('express');
+const mercadopago = require('mercadopago'); // ← IMPORTE ASSIM
 
 const app = express();
 app.use(express.json());
-app.use(cors()); // Adiciona o CORS para permitir a comunicação entre o teu site e este servidor
 
-// MUDANÇA 1: Ler a chave secreta de uma variável de ambiente
-// Isto torna o teu código muito mais seguro.
+// ⚠️ CONFIGURE COM SEU ACCESS_TOKEN REAL ⚠️
 mercadopago.configure({
-  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN
+    sandbox: true, // true para testes
+    access_token: 'APP_USR-1234567890123456-123456-abcdefghijklmnopqrstuvwxyz123456' // ← Cole seu token aqui
 });
 
-// Rota para criar a preferência de pagamento
-app.post("/criar-preferencia", async (req, res) => {
-  try {
-    // MUDANÇA 2: Ler os itens do carrinho que o front-end enviou
-    const { itens } = req.body;
+app.post('/criar-preferencia', async (req, res) => {
+    try {
+        console.log('📦 Dados recebidos:', req.body);
 
-    // Validação para garantir que recebemos os itens
-    if (!itens || !Array.isArray(itens) || itens.length === 0) {
-      return res.status(400).json({ error: 'A lista de itens é inválida ou está vazia.' });
+        const { items } = req.body;
+
+        // Validação
+        if (!items || !Array.isArray(items)) {
+            return res.status(400).json({ 
+                error: "Array de items é obrigatório"
+            });
+        }
+
+        // Preparar itens
+        const preferenceItems = items.map(item => ({
+            title: item.title || 'Produto',
+            unit_price: Number(item.unit_price) || 0,
+            quantity: Number(item.quantity) || 1,
+            currency_id: item.currency_id || 'BRL'
+        }));
+
+        // Criar preferência
+        const preference = {
+            items: preferenceItems,
+            back_urls: {
+                success: "http://localhost:3000/success",
+                failure: "http://localhost:3000/failure",
+                pending: "http://localhost:3000/pending"
+            },
+            auto_return: "approved"
+        };
+
+        console.log('🛒 Criando preferência...');
+
+        // Chamada CORRETA para o Mercado Pago
+        const result = await mercadopago.preferences.create(preference);
+        
+        console.log('✅ Preferência criada! ID:', result.body.id);
+
+        res.json({
+            success: true,
+            id: result.body.id,
+            init_point: result.body.init_point,
+            sandbox_init_point: result.body.sandbox_init_point
+        });
+
+    } catch (error) {
+        console.error('❌ Erro detalhado:', error.message);
+        
+        res.status(500).json({ 
+            error: "Erro ao criar preferência",
+            details: error.message
+        });
     }
+});
 
-    // Prepara os itens no formato que o Mercado Pago espera
-    const items_mercadopago = itens.map(item => ({
-      title: item.nome,
-      unit_price: item.preco,
-      quantity: item.quantidade,
-      currency_id: 'BRL'
-    }));
-
-    const preference = await mercadopago.preferences.create({
-      items: items_mercadopago, // Usa a lista de itens dinâmica
-      
-      // MUDANÇA 3: URLs que apontam para o teu site real
-      back_urls: {
-        success: "https://ds-tecnologia.netlify.app/sucesso.html", // Altere se necessário
-        failure: "https://ds-tecnologia.netlify.app/falha.html",   // Altere se necessário
-        pending: "https://ds-tecnologia.netlify.app/pendente.html" // Altere se necessário
-      },
-      auto_return: "approved"
-    });
-
-    res.json({ id: preference.body.id });
-
-  } catch (erro) { // MUDANÇA 4: Correção do nome da variável de erro
-    console.error(erro); // Mostra o erro detalhado no console do servidor
-    res.status(500).json({ error: "Erro ao criar preferência de pagamento." });
-  }
+// Rota de status para teste
+app.get('/status', (req, res) => {
+    res.json({ status: 'Servidor rodando!', time: new Date().toISOString() });
 });
 
 app.listen(3000, () => {
-  console.log("Servidor rodando em http://localhost:3000");
+    console.log('🚀 Servidor rodando na porta 3000');
 });

@@ -423,9 +423,10 @@ let metodoPagamento = '';
 let desconto = 0;
 
 // Configuração do Mercado Pago
-const mp = new MercadoPago('SUA_PUBLIC_KEY_AQUI', {
+const mp = new MercadoPago('APP_USR-36ed559d-8b4a-4e5c-abb1-9d191a7e4ab1', {
   locale: 'pt-BR'
 });
+
 
 // Função para criar preferência de pagamento
 async function criarPreferenciaMercadoPago() {
@@ -494,7 +495,6 @@ async function criarPreferenciaMercadoPago() {
   }
 }
 
-// Modificar a função finalizarPedido para usar Mercado Pago
 // Finalizar pedido (VERSÃO COM MERCADO PAGO)
 async function finalizarPedido() {
   if (!metodoPagamento) {
@@ -650,7 +650,7 @@ function calcularTotais() {
   document.getElementById('resumo-total').textContent = `R$ ${total.toFixed(2)}`;
 }
 
-// Buscar CEP - AGORA FUNCIONAL
+// Buscar CEP 
 function buscarCep() {
   const cepInput = document.getElementById('cep');
   const cep = cepInput.value.replace(/\D/g, '');
@@ -837,42 +837,31 @@ async function criarPreferenciaMercadoPago() {
     });
   }
   
-  try {
-    // NOTA: Você precisa implementar o endpoint '/criar-preferencia' no seu backend
-    const response = await fetch('/criar-preferencia', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+try {
+  const response = await fetch('http://localhost:3000/criar-preferencia', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      itens: itens,
+      back_urls: {
+        success: window.location.origin + '/sucesso.html',
+        failure: window.location.origin + '/erro.html',
+        pending: window.location.origin + '/pendente.html'
       },
-      body: JSON.stringify({
-        itens: itens,
-        back_urls: {
-          success: window.location.origin + '/sucesso.html',
-          failure: window.location.origin + '/falha.html',
-          pending: window.location.origin + '/pendente.html'
-        },
-        auto_return: 'approved',
-        payment_methods: {
-          excluded_payment_types: metodoPagamento === 'pix' ? 
-            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'ticket'}] : 
-            metodoPagamento === 'cartao' ? 
-            [{id: 'ticket'}, {id: 'bank_transfer'}] : 
-            metodoPagamento === 'boleto' ? 
-            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'bank_transfer'}] : 
-            []
-        }
-      })
-    });
-    
-    const preference = await response.json();
-    return preference.id;
-  } catch (error) {
-    console.error('Erro ao criar preferência:', error);
-    throw error;
-  }
-}
+      auto_return: 'approved'
+    })
+  });
+  
+  const preference = await response.json();
+  return preference.id;
+} catch (error) {
+  console.error('Erro ao criar preferência:', error);
+  throw error;
+}}
 
-// Finalizar pedido (VERSÃO CORRIGIDA)
+// Finalizar pedido 
 async function finalizarPedido() {
   if (!metodoPagamento) {
     alert('Selecione um método de pagamento');
