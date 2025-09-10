@@ -850,7 +850,7 @@ async function finalizarPedido() {
     
     // Prepara mensagem para WhatsApp
     const mensagem = `Olá! Gostaria de finalizar meu pedido:\n${dadosCliente.itens.map(item => `${item.quantidade}x ${item.nome} - R$ ${item.preco}`).join('\n')}\nTotal: R$ ${dadosCliente.total}\nForma de pagamento: ${dadosCliente.metodo.toUpperCase()}`;
-    const whatsappURL = `https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`;
+    const whatsappURL = `https://wa.me/5585981339545?text=${encodeURIComponent(mensagem)}`;
     
     // Abre WhatsApp
     window.open(whatsappURL, '_blank');
@@ -867,4 +867,5 @@ async function finalizarPedido() {
 }
 </script>
 </body>
+
 </html>
