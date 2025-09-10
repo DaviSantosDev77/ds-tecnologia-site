@@ -1,0 +1,25 @@
+{
+  "name": "ds-tecnologia",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "netlify dev:exec drizzle-kit migrate",
+    "db:studio": "netlify dev:exec drizzle-kit studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.44.5",
+    "mercadopago": "^2.8.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.4"
+  }
+}

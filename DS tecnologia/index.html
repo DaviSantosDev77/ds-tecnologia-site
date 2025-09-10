@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tecnologia DS - Seu Futuro Conectado</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background-color: #0a192f;
+    }
+    
+    .card-techno {
+      background-color: rgba(31, 41, 55, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(55, 65, 81, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-techno:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .add-to-cart {
+      transition: all 0.3s;
+      margin-top: auto;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .hero-background {
+      background-image: url('https://www.shutterstock.com/image-photo/neural-link-matrix-tech-background-600nw-2591790359.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 2000px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      color: white;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+    }
+    
+    .carrinho-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+      z-index: 40;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .carrinho-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+    }
+    
+    .notification {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      background: #10B981;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      transform: translateX(400px);
+      transition: transform 0.4s ease-out;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+    }
+    
+    .quantity-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .quantity-input {
+      width: 35px;
+      text-align: center;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 4px;
+      margin: 0 5px;
+      padding: 2px;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero-content p {
+        font-size: 1.1rem;
+      }
+      
+      nav ul {
+        display: none;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- Cabeçalho (Header) -->
+<header class="bg-gray-900 bg-opacity-80 backdrop-blur-md shadow-lg py-4 fixed w-full z-50">
+  <nav class="container mx-auto flex justify-between items-center px-4">
+    <div class="text-2xl font-bold text-blue-500 flex items-center">
+      <i class="fas fa-microchip mr-2"></i>Tecnologia DS
+    </div>
+    <ul class="hidden md:flex space-x-6 items-center">
+  <li><a href="#home" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Início</a></li>
+  <li><a href="#produtos" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Produtos</a></li>
+  <li><a href="#tutoriais" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Tutoriais</a></li>
+  <li><a href="#contato" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">Contato</a></li>
+  <li>
+    <a href="#" onclick="mostrarModalLogin()" class="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex items-center">
+      <i class="fas fa-user-circle mr-1"></i> Entrar
+    </a>
+  </li>
+</ul>
+
+  </nav>
+</header>
+
+<!-- Hero Section com partículas -->
+<section id="home" class="hero-background min-h-screen flex items-center justify-center text-center px-4 pt-20 relative overflow-hidden">
+  <!-- Partículas -->
+  <div id="particles-js"></div>
+
+  <!-- Conteúdo -->
+  <div class="hero-content p-8 rounded-lg">
+    <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+      Tecnologia DS: <span class="text-blue-400">Seu Futuro Conectado</span>
+    </h1>
+    <p class="text-xl md:text-2xl text-gray-300 mb-8">
+      Soluções inteligentes em eletrônicos para sua segurança e conveniência.
+    </p>
+    <a href="#produtos" class="btn-primary inline-block">Explore Nossos Produtos</a>
+  </div>
+</section>
+
+<!-- Configuração do Particles.js -->
+<script>
+  particlesJS("particles-js", {
+    "particles": {
+      "number": { "value": 80 },
+      "color": { "value": "#00ffff" },
+      "shape": { "type": "circle" },
+      "opacity": { "value": 0.5 },
+      "size": { "value": 3 },
+      "line_linked": {
+        "enable": true,
+        "distance": 150,
+        "color": "#00ffff",
+        "opacity": 0.4,
+        "width": 1
+      },
+      "move": {
+        "enable": true,
+        "speed": 3,
+        "direction": "none",
+        "out_mode": "out"
+      }
+    },
+    "interactivity": {
+      "events": {
+        "onhover": { "enable": true, "mode": "repulse" }
+      }
+    },
+    "retina_detect": true
+  });
+</script>
+<!-- Botão do Chatbot -->
+<div class="chatbot-btn" onclick="toggleChatbot()">
+  <i class="fas fa-robot"></i>
+</div>
+
+<!-- Interface do Chatbot -->
+<div id="chatbot-container" class="fixed bottom-24 right-6 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-80 z-50 hidden">
+  <div class="flex justify-between items-center mb-3">
+    <h3 class="text-lg font-bold">Assistente Virtual</h3>
+    <button onclick="toggleChatbot()" class="text-gray-400 hover:text-white">&times;</button>
+  </div>
+  
+  <div id="chat-messages" class="h-64 overflow-y-auto mb-3 p-2 bg-gray-700 rounded-md">
+    <div class="bot-message">
+      <p>Olá! Sou o assistente virtual da Tecnologia DS. Como posso ajudar você hoje?</p>
+    </div>
+  </div>
+  
+  <div class="flex">
+    <input type="text" id="user-input" placeholder="Digite sua pergunta..." class="flex-1 p-2 rounded-l-md bg-gray-700 text-white border border-gray-600 focus:outline-none">
+    <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-r-md">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+<style>
+  .chatbot-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 6rem;
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 6px 15px rgba(139, 92, 246, 0.4);
+    z-index: 40;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .chatbot-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
+  }
+  
+  .user-message, .bot-message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    max-width: 80%;
+  }
+  
+  .user-message {
+    background-color: #3B82F6;
+    margin-left: auto;
+    text-align: right;
+  }
+  
+  .bot-message {
+    background-color: #4B5563;
+    margin-right: auto;
+  }
+  
+  #chat-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  #chat-messages::-webkit-scrollbar-track {
+    background: #374151;
+    border-radius: 10px;
+  }
+  
+  #chat-messages::-webkit-scrollbar-thumb {
+    background: #6B7280;
+    border-radius: 10px;
+  }
+</style>
+
+<script>
+  // Sistema de respostas automáticas
+  const respostas = {
+    "preço": "Nossos preços são sempre competitivos! Você pode ver os valores de cada produto na página.",
+    "entrega": "Entregamos para todo o Brasil. O prazo varia de 5 a 15 dias úteis dependendo da sua localização.",
+    "garantia": "Todos os nossos produtos têm garantia de 3 meses a 1 ano, dependendo do item.",
+    "pagamento": "Aceitamos cartão de crédito, débito, PIX e boleto bancário.",
+    "instalação": "Temos tutoriais em vídeo para ajudar na instalação. Confira a seção de Tutoriais!",
+    "contato": "Você pode entrar em contato pelo formulário no site ou pelo WhatsApp: (11) 99999-9999",
+    "funciona": "Posso ajudar com dúvidas sobre produtos, preços, entrega e pagamento. O que gostaria de saber?",
+    "ola": "Olá! Como posso ajudar você hoje?",
+    "oi": "Oi! Em que posso ser útil?",
+    "obrigado": "Por nada! Estou aqui para ajudar sempre que precisar.",
+    "default": "Desculpe, não entendi. Pode reformular sua pergunta? Estou aqui para ajudar com informações sobre produtos, preços, entrega, pagamento e garantia."
+  };
+
+  let chatAberto = false;
+
+  function toggleChatbot() {
+    const container = document.getElementById('chatbot-container');
+    chatAberto = !chatAberto;
+    
+    if (chatAberto) {
+      container.classList.remove('hidden');
+    } else {
+      container.classList.add('hidden');
+    }
+  }
+
+  function sendMessage() {
+    const userInput = document.getElementById('user-input');
+    const message = userInput.value.trim();
+    
+    if (message === '') return;
+    
+    // Adicionar mensagem do usuário ao chat
+    addMessage(message, 'user');
+    
+    // Processar e responder
+    setTimeout(() => {
+      const response = getBotResponse(message);
+      addMessage(response, 'bot');
+    }, 600);
+    
+    // Limpar campo de entrada
+    userInput.value = '';
+  }
+
+  function addMessage(text, sender) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add(`${sender}-message`);
+    messageDiv.innerHTML = `<p>${text}</p>`;
+    messagesContainer.appendChild(messageDiv);
+    
+    // Rolagem automática para a última mensagem
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  function getBotResponse(input) {
+    input = input.toLowerCase();
+    
+    // Verificar palavras-chave
+    for (const [keyword, response] of Object.entries(respostas)) {
+      if (input.includes(keyword)) {
+        return response;
+      }
+    }
+    
+    // Resposta padrão se nenhuma palavra-chave for encontrada
+    return respostas.default;
+  }
+
+  // Permitir enviar mensagem com Enter
+  document.getElementById('user-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+</script>
+<!-- Seção de Produtos -->
+<section id="produtos" class="py-20 bg-gray-900 px-4">
+  <div class="container mx-auto text-center">
+    <h2 class="text-4xl font-bold text-white mb-12">Nossos Produtos</h2>
+
+    <!-- Categoria Câmeras Wi-Fi -->
+    <div class="mb-16">
+      <h3 class="text-3xl font-semibold text-blue-400 mb-8">Câmeras Wi-Fi</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-6">
+        <div class="card-techno text-center space-y-6">
+          <img src="https://down-br.img.susercontent.com/file/sg-11134201-7rd4v-m7muaftjjrd993" alt="Câmera Wi-Fi Externa" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Câmera de Segurança Externa 2 em 1</h4>
+          <p class="text-gray-400 text-sm mb-4">Monitoramento 24h, visão noturna colorida, detecção de movimento e áudio bidirecional.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 209,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="cam1" data-name="Câmera de Segurança Externa 2 em 1" data-price="209.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-macqqtmv76rd5c" alt="Câmera Wi-Fi Interna" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Câmera Wi-Fi Interna ou Externa 360° PTZ</h4>
+          <p class="text-gray-400 text-sm mb-4">Ideal para monitorar ambientes internos, com rotação completa e fácil instalação via app.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 149,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="cam2" data-name="Câmera Wi-Fi Interna ou Externa 360° PTZ" data-price="149.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-lryhvjl1xpvfae" alt="Câmera Lâmpada" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Câmera Wi-Fi com Bocal de Lâmpada E27</h4>
+          <p class="text-gray-400 text-sm mb-4">Discreta e fácil de instalar como uma lâmpada comum. Visão 360° e monitoramento remoto.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 119,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="cam3" data-name="Câmera Wi-Fi com Bocal de Lâmpada E27" data-price="119.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/sg-11134201-7rdys-m0d9ips1vfc57c" alt="Câmera Espiã" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Câmera A9 HD Mini Wi-Fi Espiã</h4>
+          <p class="text-gray-400 text-sm mb-4">Discreta e fácil de instalar e monitoramento remoto.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 59,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="cam4" data-name="Câmera A9 HD Mini Wi-Fi Espiã" data-price="59.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categoria Controles -->
+    <div class="mb-16">
+      <h3 class="text-3xl font-semibold text-blue-400 mb-8">Controles/Duplicadores de Portão</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-6">
+        <div class="card-techno text-center space-y-6">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m7gsca4yeone09" alt="Controle Programável" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Controle de Portão TOK 433MHz PPA</h4>
+          <p class="text-gray-400 text-sm mb-4">Compatível com frequência 433MHz. Fácil programação para portões PPA.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 37,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="ctrl1" data-name="Controle de Portão TOK 433MHz PPA" data-price="37.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-lxkd6s54ic1ia7" alt="Controle Programável" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Controle de Portão ZAP POP 433MHz PPA</h4>
+          <p class="text-gray-400 text-sm mb-4">Compatível com frequência 433MHz. Fácil programação para portões PPA.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 34,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="ctrl2" data-name="Controle de Portão ZAP POP 433MHz PPA" data-price="34.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-mbihbbxmx5yw21" alt="Duplicador Universal" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Controle Clonador 433MHz</h4>
+          <p class="text-gray-400 text-sm mb-4">Copia a maioria dos controles de portão eletrônico e alarmes com frequência fixa.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 49,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="ctrl3" data-name="Controle Clonador 433MHz" data-price="49.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-mbihbbxmzz3s0d" alt="Kit Duplicadores" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Kit com 2 Controles Duplicadores</h4>
+          <p class="text-gray-400 text-sm mb-4">Excelente para famílias ou múltiplos veículos. Economia e praticidade.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 94,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="ctrl4" data-name="Kit com 2 Controles Duplicadores" data-price="94.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categoria Videogames -->
+    <div class="mb-16">
+      <h3 class="text-3xl font-semibold text-blue-400 mb-8">Videogames Portáteis / Controles Sem Fio</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
+        <div class="card-techno text-center space-y-6">
+          <img src="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSOJDPpgz2ry1ZqY3DrkNP9xRoAnodGXk8I3LewC_nAND__Dr7siGkklT8CCM9HkRhSA6sgdlepPCCUyWqK0XlNrw2-FLi10cZ18ZdfUTZ7dG1NQ_LZ6kFJbQ" alt="Videogames" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Video game Stick</h4>
+          <p class="text-gray-400 text-sm mb-4">10mil jogos e 2 Controles Sem Fio Console Original Portatil, Jogos Retro Antigo.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 139,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="game1" data-name="Video game Stick" data-price="139.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/sg-11134201-7ra1c-m56asvyi6z6f31" alt="Console Portátil R36S" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Console Portátil R36S</h4>
+          <p class="text-gray-400 text-sm mb-4">+ de 15.000 Jogos Vídeo Game 64g Linux Tela IPS 3.5 Polegadas MING.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 249,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="game2" data-name="Console Portátil R36S" data-price="249.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/sg-11134201-7rfgn-m3esq75465vy7b" alt="Video Game Classic" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Video Game Classic</h4>
+          <p class="text-gray-400 text-sm mb-4">Super Nintendo Mini SNES Com 2 Controles 8 Bits 620 Jogos Original.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 99,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="game3" data-name="Video Game Classic" data-price="99.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://cdn.awsli.com.br/600x1000/2216/2216643/produto/285435179/814h4-erucl-_ac_sl1500_-r4r9men9rx.jpg" alt="Controle PS4" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Controle Sem fio Ps4</h4>
+          <p class="text-gray-400 text-sm mb-4">Joystick Playstation Dualshock 4 Camuflagem.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 134,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="game4" data-name="Controle Sem fio Ps4 Camuflagem" data-price="134.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://coopera.vtexassets.com/arquivos/ids/46066120/17236520469859.jpg?v=638592488517230000" alt="Controle PS4 Preto" class="w-full h-48 object-cover rounded-md mb-6">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Controle Sem fio Ps4</h4>
+          <p class="text-gray-400 text-sm mb-4">Joystick Playstation Dualshock 4 Preto.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 99,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="game5" data-name="Controle Sem fio Ps4 Preto" data-price="99.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+        <div class="card-techno">
+          <img src="https://m.media-amazon.com/images/I/61Y2pVZ2bAL.jpg" alt="Controle Celular" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Controle Para Celular</h4>
+          <p class="text-gray-400 text-sm mb-4">+ Cabo Telescópico Android AL-G7 Bluetooth.</p>
+          <span class="text-2xl font-bold text-green-400">R$ 89,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="game6" data-name="Controle Para Celular Bluetooth" data-price="89.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categoria Fechaduras Eletrônicas (Importadas) -->
+    <div class="mb-16">
+      <h3 class="text-3xl font-semibold text-blue-400 mb-8 text-center">Fechaduras Eletrônicas Importadas</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-6">
+        <div class="card-techno text-center space-y-6">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m3dphi5ta4ag59" alt="Fechadura Tuya Wi-Fi com Biometria" class="w-full h-48 object-cover rounded-md">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Fechadura IDALI LIFE Wi-Fi</h4>
+          <p class="text-gray-400 text-sm mb-4">Fechadura Digital Inteligente com Impressão Digital com Tag Wifi Moderna Bloqueio de impressões digitais.</p>
+          <span class="text-2xl font-bold text-green-400 block mb-4">R$ 569,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="lock1" data-name="Fechadura IDALI LIFE Wi-Fi" data-price="569.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m81d6p3iypzlfd" alt="Fechadura Xiaomi Smart Lock" class="w-full h-48 object-cover rounded-md mb-6">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Fechadura Tuya</h4>
+          <p class="text-gray-400 text-sm mb-4">APP WIFI Fechadura Digital Biométrica Inteligente Com Corpo De Trava.</p>
+          <span class="text-2xl font-bold text-green-400 block mb-4">R$ 549,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="lock2" data-name="Fechadura Tuya" data-price="549.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m1r6yowdzlii01" alt="Fechadura Kaadas Inteligente" class="w-full h-48 object-cover rounded-md mb-6">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Fechadura IDALI LIFE</h4>
+          <p class="text-gray-400 text-sm mb-4">Fechadura De Porta Inteligente WiFi À Prova D'água Eletrônica De Impressão Digital Para De madeira</p>
+          <span class="text-2xl font-bold text-green-400 block mb-4">R$ 599,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="lock3" data-name="Fechadura IDALI LIFE Madeira" data-price="599.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+
+        <div class="card-techno">
+          <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-mdq1xalk773t9e" alt="Fechadura Samsung SHP" class="w-full h-48 object-cover rounded-md mb-4">
+          <h4 class="text-xl font-bold text-blue-400 text-center mb-2">Fechadura Eletrônica Digital 4 em 1 </h4>
+          <p class="text-gray-400 text-sm mb-4">Top de linha, Com Biometria, Bluetooth, Senha Touch, Chave и Tag.</p>
+          <span class="text-2xl font-bold text-green-400 block mb-4">R$ 499,90</span>
+          <button class="add-to-cart bg-blue-600 hover:bg-blue-700 text-white" data-id="lock4" data-name="Fechadura Eletrônica Digital 4 em 1" data-price="499.90">
+            🛒 Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Seção de Tutoriais -->
+<section id="tutoriais" class="py-20 bg-gray-800 px-4">
+  <div class="container mx-auto text-center">
+    <h2 class="text-4xl font-bold text-white mb-12">Nossos Tutoriais</h2>
+    <p class="text-lg text-gray-300 mb-8">
+      Aprenda a instalar, configurar e aproveitar ao máximo seus produtos com nossos guias passo a passo.
+    </p>
+    <div class="flex flex-wrap justify-center gap-6 mt-8">
+      <!-- Card Configurar Câmera -->
+      <div class="relative w-80 h-64 bg-cover bg-center rounded-xl shadow-lg" style="background-image: url('https://via.placeholder.com/320x240/1F2937/FFFFFF?text=Tutorial+Câmera');">
+        <div class="absolute inset-0 bg-black bg-opacity-50 rounded-xl p-6 flex flex-col justify-end">
+          <h4 class="text-xl font-bold text-white mb-2">Como Configurar Sua Câmera Wi-Fi</h4>
+          <p class="text-gray-300 text-sm mb-4">Guia completo para a primeira instalação e conexão ao seu smartphone.</p>
+          <a href="https://youtu.be/hr6BA9x58Qc" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block text-center">Assistir Vídeo</a>
+        </div>
+      </div>
+
+      <!-- Card Clonar Controle -->
+      <div class="relative w-80 h-64 bg-cover bg-center rounded-xl shadow-lg" style="background-image: url('https://via.placeholder.com/320x240/1F2937/FFFFFF?text=Tutorial+Controle');">
+        <div class="absolute inset-0 bg-black bg-opacity-50 rounded-xl p-6 flex flex-col justify-end">
+          <h4 class="text-xl font-bold text-white mb-2">Duplicando Seu Controle de Portão</h4>
+          <p class="text-gray-300 text-sm mb-4">Passos simples para copiar o sinal do seu controle remoto existente.</p>
+          <a href="https://youtu.be/EwTOfpIm7GM" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block text-center">Assistir Vídeo</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" class="btn-primary inline-block mt-12">Ver Todos os Tutoriais</a>
+  </div>
+</section>
+
+<!-- Seção de Contato -->
+<!-- Seção de Contato -->
+<section id="contato" class="py-20 bg-gray-900 px-4">
+  <div class="container mx-auto text-center">
+    <h2 class="text-4xl font-bold text-white mb-12">Entre em Contato</h2>
+    <p class="text-lg text-gray-300 mb-8">
+      Tem dúvidas sobre nossos produtos ou precisa de suporte técnico? Preencha o formulário abaixo!
+    </p>
+    <div class="max-w-xl mx-auto bg-gray-800 bg-opacity-70 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-gray-700">
+      <form action="https://formspree.io/f/mpwlvopd" method="POST">
+        <div class="mb-6">
+          <input type="text" name="name" placeholder="Seu Nome" class="w-full p-4 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div class="mb-6">
+          <input type="email" name="email" placeholder="Seu E-mail" class="w-full p-4 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div class="mb-6">
+          <textarea name="message" placeholder="Sua Mensagem" rows="5" class="w-full p-4 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+        </div>
+        <button type="submit" class="btn-primary w-full">Enviar Mensagem</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Botão do Carrinho -->
+<div class="carrinho-btn" onclick="abrirCheckout()">
+  🛒
+  <span id="carrinho-count" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">0</span>
+</div>
+
+<!-- Carrinho de Compras -->
+<div id="carrinho-container" class="fixed bottom-20 right-4 bg-gray-900 text-white p-4 rounded-lg shadow-lg w-80 z-50 hidden">
+  <h3 class="text-lg font-bold mb-2">🛒 Carrinho</h3>
+  <ul id="carrinho-itens" class="text-sm mb-2 max-h-60 overflow-y-auto"></ul>
+  <p class="text-green-400 font-bold mb-2">Total: R$ <span id="carrinho-total">0.00</span></p>
+  <button onclick="finalizarCompra()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">Finalizar Compra</button>
+</div>
+
+<!-- Rodapé (Footer) -->
+<footer class="bg-gray-900 bg-opacity-80 py-8 text-center text-gray-500 text-sm border-t border-gray-700">
+  <div class="container mx-auto px-4">
+    <p>&copy; 2025 Tecnologia DS. Todos os direitos reservados.</p>
+    <div class="flex justify-center space-x-4 mt-4">
+      <a href="#" class="hover:text-blue-400 transition-colors duration-200">Privacidade</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-200">Termos de Serviço</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Dados dos produtos
+  const produtos = {
+    'cam1': { nome: 'Câmera de Segurança Externa 2 em 1', preco: 209.90 },
+    'cam2': { nome: 'Câmera Wi-Fi Interna ou Externa 360° PTZ', preco: 149.90 },
+    'cam3': { nome: 'Câmera Wi-Fi com Bocal de Lâmpada E27', preco: 119.90 },
+    'cam4': { nome: 'Câmera A9 HD Mini Wi-Fi Espiã', preco: 59.90 },
+    'ctrl1': { nome: 'Controle de Portão TOK 433MHz PPA', preco: 37.90 },
+    'ctrl2': { nome: 'Controle de Portão ZAP POP 433MHz PPA', preco: 34.90 },
+    'ctrl3': { nome: 'Controle Clonador 433MHz', preco: 49.90 },
+    'ctrl4': { nome: 'Kit com 2 Controles Duplicadores', preco: 94.90 },
+    'game1': { nome: 'Video game Stick', preco: 139.90 },
+    'game2': { nome: 'Console Portátil R36S', preco: 249.90 },
+    'game3': { nome: 'Video Game Classic', preco: 99.90 },
+    'game4': { nome: 'Controle Sem fio Ps4 Camuflagem', preco: 134.90 },
+    'game5': { nome: 'Controle Sem fio Ps4 Preto', preco: 99.90 },
+    'game6': { nome: 'Controle Para Celular Bluetooth', preco: 89.90 },
+    'lock1': { nome: 'Fechadura IDALI LIFE Wi-Fi', preco: 569.90 },
+    'lock2': { nome: 'Fechadura Tuya', preco: 549.90 },
+    'lock3': { nome: 'Fechadura IDALI LIFE Madeira', preco: 599.90 },
+    'lock4': { nome: 'Fechadura Eletrônica Digital 4 em 1', preco: 499.90 }
+  };
+
+  // Carrinho de compras
+  let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+  let carrinhoAberto = false;
+
+  // Atualizar contador do carrinho
+  function atualizarContadorCarrinho() {
+    const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+    document.getElementById('carrinho-count').textContent = totalItens;
+  }
+
+  // Alternar visibilidade do carrinho
+  function toggleCarrinho() {
+    const container = document.getElementById('carrinho-container');
+    carrinhoAberto = !carrinhoAberto;
+    
+    if (carrinhoAberto) {
+      container.classList.remove('hidden');
+      renderizarCarrinho();
+    } else {
+      container.classList.add('hidden');
+    }
+  }
+
+  // Adicionar produto ao carrinho
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const productId = e.target.getAttribute('data-id');
+      const productName = e.target.getAttribute('data-name');
+      const productPrice = parseFloat(e.target.getAttribute('data-price'));
+      
+      // Verificar se o produto já está no carrinho
+      const itemIndex = carrinho.findIndex(item => item.id === productId);
+      
+      if (itemIndex > -1) {
+        // Se já existe, aumenta a quantidade
+        carrinho[itemIndex].quantidade += 1;
+      } else {
+        // Se não existe, adiciona novo item
+        carrinho.push({
+          id: productId,
+          nome: productName,
+          preco: productPrice,
+          quantidade: 1
+        });
+      }
+// Função para abrir/fechar o carrinho
+function abrirCheckout() {
+  const container = document.getElementById('carrinho-container');
+  // Alternar visibilidade
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    renderizarCarrinho();
+    carrinhoAberto = true;
+  } else {
+    container.classList.add('hidden');
+    carrinhoAberto = false;
+  }
+}
+
+// Fechar carrinho ao clicar fora dele
+document.addEventListener('click', function(e) {
+  const carrinhoContainer = document.getElementById('carrinho-container');
+  const carrinhoBtn = document.querySelector('.carrinho-btn');
+  
+  if (carrinhoAberto && 
+      !carrinhoContainer.contains(e.target) && 
+      !carrinhoBtn.contains(e.target)) {
+    carrinhoContainer.classList.add('hidden');
+    carrinhoAberto = false;
+  }
+});
+
+      // Salvar no localStorage
+      localStorage.setItem('carrinho', JSON.stringify(carrinho));
+      
+      // Atualizar contador
+      atualizarContadorCarrinho();
+      
+      // Mostrar mensagem de sucesso
+      alert(`${productName} adicionado ao carrinho!`);
+      
+      // Se o carrinho estiver aberto, atualizar a visualização
+      if (carrinhoAberto) {
+        renderizarCarrinho();
+      }
+    });
+  });
+
+  // Renderizar itens do carrinho
+  function renderizarCarrinho() {
+    const carrinhoItens = document.getElementById('carrinho-itens');
+    const carrinhoTotal = document.getElementById('carrinho-total');
+    
+    // Limpar lista
+    carrinhoItens.innerHTML = '';
+    
+    // Calcular total
+    let total = 0;
+    
+    // Adicionar itens
+    carrinho.forEach((item, index) => {
+      const itemTotal = item.preco * item.quantidade;
+      total += itemTotal;
+      
+      const li = document.createElement('li');
+      li.className = 'flex justify-between items-center py-2 border-b border-gray-700';
+      li.innerHTML = `
+        <div class="flex-1">
+          <p class="font-medium">${item.nome}</p>
+          <p class="text-gray-400">R$ ${item.preco.toFixed(2)} x ${item.quantidade}</p>
+        </div>
+        <div class="flex items-center">
+          <span class="mx-2 font-bold">R$ ${itemTotal.toFixed(2)}</span>
+          <button onclick="removerDoCarrinho(${index})" class="text-red-500 hover:text-red-400 ml-2">
+            ❌
+          </button>
+        </div>
+      `;
+      
+      carrinhoItens.appendChild(li);
+    });
+    
+    // Atualizar total
+    carrinhoTotal.textContent = total.toFixed(2);
+    
+    // Se o carrinho estiver vazio, mostrar mensagem
+    if (carrinho.length === 0) {
+      carrinhoItens.innerHTML = '<li class="py-4 text-center text-gray-400">Seu carrinho está vazio</li>';
+    }
+  }
+
+  // Remover item do carrinho
+  function removerDoCarrinho(index) {
+    carrinho.splice(index, 1);
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    atualizarContadorCarrinho();
+    renderizarCarrinho();
+  }
+  // Adicionar estilo CSS para as abas
+  const style = document.createElement('style');
+  style.textContent = `
+    .tab-btn {
+      transition: all 0.3s ease;
+    }
+    
+    .tab-btn:hover {
+      color: #60a5fa !important;
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+
+<!-- Modal de Login/Cadastro -->
+<div id="login-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+  <div class="bg-gray-800 rounded-lg p-6 w-11/12 max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Entrar ou Cadastrar</h3>
+      <button onclick="fecharModalLogin()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+    
+    <div id="login-tabs" class="flex mb-4 border-b border-gray-700">
+      <button class="tab-btn py-2 px-4 font-medium text-blue-400 border-b-2 border-blue-400" data-tab="login" onclick="mudarAba('login')">Entrar</button>
+      <button class="tab-btn py-2 px-4 font-medium text-gray-400" data-tab="register" onclick="mudarAba('register')">Cadastrar</button>
+    </div>
+    
+    <!-- Formulário de Login -->
+    <form id="login-form" class="tab-content">
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2">CPF</label>
+        <input type="text" id="login-cpf" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Digite seu CPF" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2">Senha</label>
+        <input type="password" id="login-password" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Digite sua senha" required>
+      </div>
+      <button type="button" onclick="fazerLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-4">Entrar</button>
+    </form>
+    
+    <!-- Formulário de Cadastro -->
+    <form id="register-form" class="tab-content hidden">
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2">Nome Completo</label>
+        <input type="text" id="register-name" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Seu nome completo" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2">CPF</label>
+        <input type="text" id="register-cpf" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Apenas números" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2">E-mail</label>
+        <input type="email" id="register-email" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Seu e-mail" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2">Senha</label>
+        <input type="password" id="register-password" class="w-full p-2 rounded bg-gray-700 text-white" placeholder="Mínimo 6 caracteres" required minlength="6">
+      </div>
+      <button type="button" onclick="fazerCadastro()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-4">Criar Conta</button>
+    </form>
+    
+    <div class="text-center my-4">
+      <span class="text-gray-400">Ou</span>
+    </div>
+    
+    <!-- Login com Google -->
+    <button onclick="loginComGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-800 py-2 px-4 rounded flex items-center justify-center">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="w-5 h-5 mr-2">
+      Entrar com Google
+    </button>
+  </div>
+</div>
+
+<script>
+// Funções para o sistema de login/cadastro
+function mostrarModalLogin() {
+  document.getElementById('login-modal').classList.remove('hidden');
+}
+
+function fecharModalLogin() {
+  document.getElementById('login-modal').classList.add('hidden');
+}
+
+// Função para mudar entre abas
+function mudarAba(aba) {
+  // Atualizar botões
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('text-blue-400', 'border-b-2', 'border-blue-400');
+    btn.classList.add('text-gray-400');
+  });
+  
+  const btnAtivo = document.querySelector(`[data-tab="${aba}"]`);
+  btnAtivo.classList.add('text-blue-400', 'border-b-2', 'border-blue-400');
+  btnAtivo.classList.remove('text-gray-400');
+  
+  // Mostrar conteúdo da aba selecionada
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+  document.getElementById(`${aba}-form`).classList.remove('hidden');
+}
+
+// Formatar CPF
+function formatarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length > 11) cpf = cpf.substring(0, 11);
+  cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+  cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  return cpf;
+}
+
+// Aplicar formatação de CPF nos campos
+document.getElementById('login-cpf').addEventListener('input', function(e) {
+  e.target.value = formatarCPF(e.target.value);
+});
+
+document.getElementById('register-cpf').addEventListener('input', function(e) {
+  e.target.value = formatarCPF(e.target.value);
+});
+
+// Validar CPF
+function validarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length !== 11) return false;
+  
+  // Verifica se todos os dígitos são iguais
+  if (/^(\d)\1+$/.test(cpf)) return false;
+  
+  // Validação dos dígitos verificadores
+  let soma = 0;
+  for (let i = 0; i < 9; i++) {
+    soma += parseInt(cpf.charAt(i)) * (10 - i);
+  }
+  
+  let resto = soma % 11;
+  let digitoVerificador1 = resto < 2 ? 0 : 11 - resto;
+  
+  if (digitoVerificador1 !== parseInt(cpf.charAt(9))) return false;
+  
+  soma = 0;
+  for (let i = 0; i < 10; i++) {
+    soma += parseInt(cpf.charAt(i)) * (11 - i);
+  }
+  
+  resto = soma % 11;
+  let digitoVerificador2 = resto < 2 ? 0 : 11 - resto;
+  
+  return digitoVerificador2 === parseInt(cpf.charAt(10));
+}
+
+// Função para cadastro
+function fazerCadastro() {
+  const nome = document.getElementById('register-name').value;
+  const cpf = document.getElementById('register-cpf').value;
+  const email = document.getElementById('register-email').value;
+  const senha = document.getElementById('register-password').value;
+  
+  // Validar CPF
+  if (!validarCPF(cpf)) {
+    alert('CPF inválido. Por favor, verifique o número digitado.');
+    return;
+  }
+  
+  // Verificar se usuário já existe
+  const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+  const usuarioExistente = usuarios.find(u => u.cpf === cpf.replace(/\D/g, '') || u.email === email);
+  
+  if (usuarioExistente) {
+    alert('Já existe uma conta com este CPF ou e-mail.');
+    return;
+  }
+  
+  // Criar novo usuário
+  const novoUsuario = {
+    id: Date.now(),
+    nome,
+    cpf: cpf.replace(/\D/g, ''),
+    email,
+    senha
+  };
+  
+  usuarios.push(novoUsuario);
+  localStorage.setItem('usuarios', JSON.stringify(usuarios));
+  
+  // Autologin
+  localStorage.setItem('usuarioLogado', JSON.stringify(novoUsuario));
+  
+  alert('Cadastro realizado com sucesso!');
+  fecharModalLogin();
+  
+  // Finalizar compra se estava no processo
+  if (window.pendenteFinalizacaoCompra) {
+    finalizarCompra();
+  }
+}
+
+// Função para login
+function fazerLogin() {
+  const cpf = document.getElementById('login-cpf').value.replace(/\D/g, '');
+  const senha = document.getElementById('login-password').value;
+  
+  const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+  const usuario = usuarios.find(u => u.cpf === cpf && u.senha === senha);
+  
+  if (!usuario) {
+    alert('CPF ou senha incorretos.');
+    return;
+  }
+  
+  localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+  alert('Login realizado com sucesso!');
+  fecharModalLogin();
+  
+  // Finalizar compra se estava no processo
+  if (window.pendenteFinalizacaoCompra) {
+    finalizarCompra();
+  }
+}
+
+// Login com Google (simulado)
+function loginComGoogle() {
+  const nome = "Usuário Google";
+  const email = "usuario.google@example.com";
+  
+  const usuario = {
+    id: 'google_' + Date.now(),
+    nome,
+    email,
+    provider: 'google'
+  };
+  
+  localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+  alert('Login com Google realizado com sucesso!');
+  fecharModalLogin();
+  
+  // Finalizar compra se estava no processo
+  if (window.pendenteFinalizacaoCompra) {
+    finalizarCompra();
+  }
+}
+
+// Verificar se usuário está logado
+function usuarioEstaLogado() {
+  return localStorage.getItem('usuarioLogado') !== null;
+}
+
+// Função para abrir o carrinho (substitui a toggleCarrinho)
+function abrirCheckout() {
+  const container = document.getElementById('carrinho-container');
+  container.classList.remove('hidden');
+  renderizarCarrinho();
+}
+
+// Função para finalizar compra
+function finalizarCompra() {
+  console.log('Função finalizarCompra() chamada');
+  
+  if (carrinho.length === 0) {
+    alert('Seu carrinho está vazio!');
+    return;
+  }
+  
+  // Verificar se o usuário está logado
+  if (!usuarioEstaLogado()) {
+    console.log('Usuário não logado, mostrando modal de login');
+    window.pendenteFinalizacaoCompra = true;
+    mostrarModalLogin();
+    return;
+  }
+  
+  console.log('Usuário logado, prosseguindo com finalização');
+  
+  const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+  
+  // Salvar dados da compra
+  const compra = {
+    usuario: usuario,
+    itens: carrinho,
+    total: carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0),
+    data: new Date().toISOString()
+  };
+  
+  localStorage.setItem('compraAtual', JSON.stringify(compra));
+  
+  console.log('Redirecionando para checkout.html');
+  window.location.href = 'checkout.html';
+  
+  // Limpar flag de pendência
+  window.pendenteFinalizacaoCompra = false;
+}
+
+// Inicializar contador do carrinho
+atualizarContadorCarrinho();
+// Função para abrir/fechar o carrinho
+function abrirCheckout() {
+  const container = document.getElementById('carrinho-container');
+  // Alternar visibilidade
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    renderizarCarrinho();
+    carrinhoAberto = true;
+  } else {
+    container.classList.add('hidden');
+    carrinhoAberto = false;
+  }
+}
+
+// Fechar carrinho ao clicar fora dele
+document.addEventListener('click', function(e) {
+  const carrinhoContainer = document.getElementById('carrinho-container');
+  const carrinhoBtn = document.querySelector('.carrinho-btn');
+  
+  if (carrinhoAberto && 
+      !carrinhoContainer.contains(e.target) && 
+      !carrinhoBtn.contains(e.target)) {
+    carrinhoContainer.classList.add('hidden');
+    carrinhoAberto = false;
+  }
+});
+</script>
