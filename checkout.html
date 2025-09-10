@@ -295,64 +295,6 @@
             </div>
             <p class="text-gray-400 text-sm mt-2">Pagamento instantâneo com 5% de desconto</p>
           </div>
-          
-          <div class="payment-option" data-method="cartao">
-            <div class="flex items-center">
-              <input type="radio" name="pagamento" id="cartao" value="cartao" class="mr-3">
-              <label for="cartao" class="text-gray-300 font-medium">Cartão de Crédito</label>
-            </div>
-            <p class="text-gray-400 text-sm mt-2">Parcele em até 12x</p>
-            
-            <div id="dados-cartao" class="mt-4 hidden space-y-4">
-              <div>
-                <label class="block text-gray-300 mb-2">Número do Cartão</label>
-                <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0000 0000 0000 0000">
-              </div>
-              
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-gray-300 mb-2">Validade</label>
-                  <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="MM/AA">
-                </div>
-                
-                <div>
-                  <label class="block text-gray-300 mb-2">CVV</label>
-                  <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="000">
-                </div>
-              </div>
-              
-              <div>
-                <label class="block text-gray-300 mb-2">Nome no Cartão</label>
-                <input type="text" class="w-full p-3 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Como está no cartão">
-              </div>
-              
-              <div>
-                <label class="block text-gray-300 mb-2">Parcelas</label>
-                <select class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>1x de R$ 0,00 sem juros</option>
-                  <option>2x de R$ 0,00 sem juros</option>
-                  <option>3x de R$ 0,00 sem juros</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          <div class="payment-option" data-method="debito">
-            <div class="flex items-center">
-              <input type="radio" name="pagamento" id="debito" value="debito" class="mr-3">
-              <label for="debito" class="text-gray-300 font-medium">Cartão de Débito</label>
-            </div>
-            <p class="text-gray-400 text-sm mt-2">Pagamento à vista</p>
-          </div>
-          
-          <div class="payment-option" data-method="boleto">
-            <div class="flex items-center">
-              <input type="radio" name="pagamento" id="boleto" value="boleto" class="mr-3">
-              <label for="boleto" class="text-gray-300 font-medium">Boleto Bancário</label>
-            </div>
-            <p class="text-gray-400 text-sm mt-2">Pagamento em até 3 dias úteis</p>
-          </div>
-        </div>
         
         <div id="pix-info" class="mt-6 hidden">
           <div class="pix-code">
@@ -427,7 +369,6 @@ const mp = new MercadoPago('APP_USR-36ed559d-8b4a-4e5c-abb1-9d191a7e4ab1', {
   locale: 'pt-BR'
 });
 
-
 // Função para criar preferência de pagamento
 async function criarPreferenciaMercadoPago() {
   const itens = compra.itens.map(item => ({
@@ -495,6 +436,7 @@ async function criarPreferenciaMercadoPago() {
   }
 }
 
+// Modificar a função finalizarPedido para usar Mercado Pago
 // Finalizar pedido (VERSÃO COM MERCADO PAGO)
 async function finalizarPedido() {
   if (!metodoPagamento) {
@@ -650,7 +592,7 @@ function calcularTotais() {
   document.getElementById('resumo-total').textContent = `R$ ${total.toFixed(2)}`;
 }
 
-// Buscar CEP 
+// Buscar CEP - AGORA FUNCIONAL
 function buscarCep() {
   const cepInput = document.getElementById('cep');
   const cep = cepInput.value.replace(/\D/g, '');
@@ -837,73 +779,92 @@ async function criarPreferenciaMercadoPago() {
     });
   }
   
-try {
-  const response = await fetch('http://localhost:3000/criar-preferencia', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      itens: itens,
-      back_urls: {
-        success: window.location.origin + '/sucesso.html',
-        failure: window.location.origin + '/erro.html',
-        pending: window.location.origin + '/pendente.html'
+  try {
+    // NOTA: Você precisa implementar o endpoint '/criar-preferencia' no seu backend
+    const response = await fetch('/criar-preferencia', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      auto_return: 'approved'
-    })
-  });
-  
-  const preference = await response.json();
-  return preference.id;
-} catch (error) {
-  console.error('Erro ao criar preferência:', error);
-  throw error;
-}}
-
-// Finalizar pedido 
-async function finalizarPedido() {
-  if (!metodoPagamento) {
-    alert('Selecione um método de pagamento');
-    return;
-  }
-  
-  // Validar dados do cartão se for a opção selecionada
-  if (metodoPagamento === 'cartao') {
-    const inputs = document.querySelectorAll('#dados-cartao input');
-    let cartaoValido = true;
-    
-    inputs.forEach(input => {
-      if (!input.value) {
-        cartaoValido = false;
-        input.classList.add('border-red-500');
-      } else {
-        input.classList.remove('border-red-500');
-      }
+      body: JSON.stringify({
+        itens: itens,
+        back_urls: {
+          success: window.location.origin + '/sucesso.html',
+          failure: window.location.origin + '/falha.html',
+          pending: window.location.origin + '/pendente.html'
+        },
+        auto_return: 'approved',
+        payment_methods: {
+          excluded_payment_types: metodoPagamento === 'pix' ? 
+            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'ticket'}] : 
+            metodoPagamento === 'cartao' ? 
+            [{id: 'ticket'}, {id: 'bank_transfer'}] : 
+            metodoPagamento === 'boleto' ? 
+            [{id: 'credit_card'}, {id: 'debit_card'}, {id: 'bank_transfer'}] : 
+            []
+        }
+      })
     });
     
-    if (!cartaoValido) {
-      alert('Preencha todos os dados do cartão');
-      return;
-    }
-  }
-  
-  try {
-    // Criar preferência no Mercado Pago
-    const preferenciaId = await criarPreferenciaMercadoPago();
-    
-    // Redirecionar para o checkout do Mercado Pago
-    window.location.href = `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${preferenciaId}`;
-    
-    // Aqui você também pode salvar o pedido no seu banco de dados
-    await salvarPedidoNoBanco(preferenciaId);
-    
+    const preference = await response.json();
+    return preference.id;
   } catch (error) {
-    console.error('Erro ao processar pagamento:', error);
-    alert('Erro ao processar pagamento. Tente novamente.');
+    console.error('Erro ao criar preferência:', error);
+    throw error;
   }
 }
 
+// Finalizar pedido (VERSÃO CORRIGIDA)
+async function finalizarPedido() {
+  if (!metodoPagamento) {
+    alert('Selecione PIX ou Boleto');
+    return;
+  }
+  
+  try {
+    // Coleta dados do cliente
+    const dadosCliente = {
+      nome: document.getElementById('endereco').value.split(' ')[0], // primeiro nome
+      email: 'cliente@email.com', // você pode adicionar campo de email depois
+      telefone: '', // pode adicionar campo de telefone
+      endereco: {
+        cep: document.getElementById('cep').value,
+        endereco: document.getElementById('endereco').value,
+        numero: document.getElementById('numero').value,
+        complemento: document.getElementById('complemento').value,
+        bairro: document.getElementById('bairro').value,
+        cidade: document.getElementById('cidade').value,
+        estado: document.getElementById('estado').value
+      },
+      metodo: metodoPagamento,
+      itens: compra.itens,
+      total: compra.itens.reduce((total, item) => total + (item.preco * item.quantidade), 0) + freteSelecionado
+    };
+    
+    // Mostra informações de pagamento
+    if (metodoPagamento === 'pix') {
+      alert(`💰 PIX: 97deb86a-7d32-44b9-99e6-448821331dec\n\n💬 Após o pagamento, envie o comprovante para nosso WhatsApp!\n📞 (11) 99999-9999`);
+    } else {
+      alert(`📄 Boleto será enviado por email!\n\n💬 Envie seu email para nosso WhatsApp para receber o boleto!\n📞 (11) 99999-9999`);
+    }
+    
+    // Prepara mensagem para WhatsApp
+    const mensagem = `Olá! Gostaria de finalizar meu pedido:\n${dadosCliente.itens.map(item => `${item.quantidade}x ${item.nome} - R$ ${item.preco}`).join('\n')}\nTotal: R$ ${dadosCliente.total}\nForma de pagamento: ${dadosCliente.metodo.toUpperCase()}`;
+    const whatsappURL = `https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`;
+    
+    // Abre WhatsApp
+    window.open(whatsappURL, '_blank');
+    
+    // Redireciona para obrigado
+    setTimeout(() => {
+      window.location.href = 'obrigado.html';
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao processar. Entre em contato pelo WhatsApp!');
+  }
+}
 </script>
 </body>
 </html>
