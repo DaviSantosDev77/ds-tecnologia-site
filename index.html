@@ -332,20 +332,40 @@
 </style>
 
 <script>
-  // Sistema de respostas automáticas
-  const respostas = {
-    "preço": "Nossos preços são sempre competitivos! Você pode ver os valores de cada produto na página.",
-    "entrega": "Entregamos para todo o Brasil. O prazo varia de 5 a 15 dias úteis dependendo da sua localização.",
-    "garantia": "Todos os nossos produtos têm garantia de 3 meses a 1 ano, dependendo do item.",
-    "pagamento": "Aceitamos cartão de crédito, débito, PIX e boleto bancário.",
-    "instalação": "Temos tutoriais em vídeo para ajudar na instalação. Confira a seção de Tutoriais!",
-    "contato": "Você pode entrar em contato pelo formulário no site ou pelo WhatsApp: (11) 98133-9545",
-    "funciona": "Posso ajudar com dúvidas sobre produtos, preços, entrega e pagamento. O que gostaria de saber?",
-    "ola": "Olá! Como posso ajudar você hoje?",
-    "oi": "Oi! Em que posso ser útil?",
-    "obrigado": "Por nada! Estou aqui para ajudar sempre que precisar.",
-    "default": "Desculpe, não entendi. Pode reformular sua pergunta? Estou aqui para ajudar com informações sobre produtos, preços, entrega, pagamento e garantia."
-  };
+const respostas = {
+  // PRODUTOS ESPECÍFICOS
+  "câmera": "Temos várias câmeras de segurança! 📹\n• Câmera Externa 2 em 1: R$ 209,90\n• Câmera Wi-Fi 360°: R$ 149,90\n• Câmera Lâmpada: R$ 119,90\n• Câmera Espiã: R$ 59,90\n\nQual te interessa mais?",
+  "camera": "Temos várias câmeras de segurança! 📹\n• Câmera Externa 2 em 1: R$ 209,90\n• Câmera Wi-Fi 360°: R$ 149,90\n• Câmera Lâmpada: R$ 119,90\n• Câmera Espiã: R$ 59,90\n\nQual te interessa mais?",
+  "controle": "Temos controles de portão! 🚗\n• Controle TOK: R$ 37,90\n• Controle ZAP POP: R$ 34,90\n• Clonador: R$ 49,90\n• Kit com 2: R$ 94,90\n\nPrecisa de qual?",
+  "videogame": "Temos consoles e controles! 🎮\n• Video game Stick: R$ 139,90\n• Console Portátil: R$ 249,90\n• Super Nintendo: R$ 99,90\n• Controle PS4: a partir de R$ 99,90\n\nQual você quer?",
+  "fechadura": "Temos fechaduras inteligentes! 🔐\n• IDALI LIFE Wi-Fi: R$ 569,90\n• Tuya: R$ 549,90\n• IDALI LIFE Madeira: R$ 599,90\n• Digital 4 em 1: R$ 499,90\n\nQual modelo te atrai?",
+  
+  // INFORMAÇÕES GERAIS
+  "preço": "💰 Todos os preços estão na página de produtos! Posso te dar detalhes de algum item específico?",
+  "valor": "💰 Todos os preços estão na página de produtos! Posso te dar detalhes de algum item específico?",
+  "quanto custa": "💰 Todos os preços estão na página de produtos! Posso te dar detalhes de algum item específico?",
+  "entrega": "🚚 Entregamos para todo o Brasil! \n• Frete SEDEX: R$ 25,90 (3-5 dias)\n• Frete PAC: R$ 18,90 (7-15 dias)\n• Grátis acima de R$ 300,00",
+  "frete": "🚚 Entregamos para todo o Brasil! \n• Frete SEDEX: R$ 25,90 (3-5 dias)\n• Frete PAC: R$ 18,90 (7-15 dias)\n• Grátis acima de R$ 300,00",
+  "prazo": "⏰ Prazos de entrega:\n• Capital: 5-7 dias úteis\n• Interior: 7-15 dias úteis\n• Frete expresso disponível!",
+  "garantia": "🔧 Garantia de 3 meses a 1 ano, dependendo do produto! Todos têm garantia contra defeitos de fabricação.",
+  "pagamento": "💳 Aceitamos: \n• PIX (5% de desconto)\n• Cartão de crédito\n• Boleto bancário\n• Transferência",
+  "forma de pagamento": "💳 Aceitamos: \n• PIX (5% de desconto)\n• Cartão de crédito\n• Boleto bancário\n• Transferência",
+  
+  // SUPORTE E CONTATO
+  "contato": "📞 WhatsApp: (11) 99999-9999\n📧 Email: contato@tecnologiads.com.br\n💬 Ou use nosso formulário de contato!",
+  "whatsapp": "📞 Nosso WhatsApp: (11) 99999-9999\nFale diretamente conosco!",
+  "email": "📧 Email: contato@tecnologiads.com.br\nRespondemos em até 24h!",
+  "suporte": "🛠️ Suporte técnico:\n• WhatsApp: (11) 99999-9999\n• Email: suporte@tecnologiads.com.br\n• Tutoriais em vídeo disponíveis",
+  
+  // SAUDAÇÕES
+  "ola": "👋 Olá! Sou o assistente da Tecnologia DS! Posso ajudar com:\n• Informações sobre produtos\n• Preços e promoções\n• Prazos de entrega\n• Formas de pagamento\n\nComo posso te ajudar?",
+  "oi": "👋 Oi! Tudo bem? Sou o assistente virtual da Tecnologia DS. Em que posso te ajudar hoje?",
+  "obrigado": "😊 Por nada! Estou aqui sempre que precisar. Mais alguma coisa?",
+  "valeu": "😊 Por nada! Estou aqui sempre que precisar. Mais alguma coisa?",
+  
+  // RESPOSTA PADRÃO MAIS ÚTIL
+  "default": "🤔 Não entendi muito bem...\n\nPosso ajudar com:\n• 📹 Câmeras de segurança\n• 🚗 Controles de portão\n• 🎮 Videogames\n• 🔐 Fechaduras inteligentes\n• 💰 Preços e promoções\n• 🚚 Prazos de entrega\n\nO que gostaria de saber?"
+};
 
   let chatAberto = false;
 
