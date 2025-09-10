@@ -411,18 +411,31 @@ const respostas = {
   }
 
   function getBotResponse(input) {
-    input = input.toLowerCase();
-    
-    // Verificar palavras-chave
-    for (const [keyword, response] of Object.entries(respostas)) {
-      if (input.includes(keyword)) {
-        return response;
-      }
+  input = input.toLowerCase();
+  
+  // Verifica palavras-chave com lógica mais inteligente
+  for (const [keyword, response] of Object.entries(respostas)) {
+    if (input.includes(keyword)) {
+      return response;
     }
-    
-    // Resposta padrão se nenhuma palavra-chave for encontrada
-    return respostas.default;
   }
+  // Se não encontrou, verifica por categorias
+  if (input.includes('segurança') || input.includes('monitoramento')) {
+    return respostas["câmera"];
+  }
+  if (input.includes('portão') || input.includes('portao') || input.includes('garagem')) {
+    return respostas["controle"];
+  }
+  if (input.includes('jogo') || input.includes('game') || input.includes('playstation')) {
+    return respostas["videogame"];
+  }
+  if (input.includes('fechadura') || input.includes('cadeado') || input.includes('fechad')) {
+    return respostas["fechadura"];
+  }
+  
+  // Resposta padrão se nenhuma palavra-chave for encontrada
+  return respostas.default;
+}
 
   // Permitir enviar mensagem com Enter
   document.getElementById('user-input').addEventListener('keypress', function(e) {
